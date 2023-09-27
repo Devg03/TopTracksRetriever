@@ -1,8 +1,8 @@
 import requests
 from pprint import pprint
 
-SPOTIFY_GET_CURRENT_TRACK_URL = ' '
-SPOTIFY_ACCESS_TOKEN = ' '
+SPOTIFY_GET_CURRENT_TRACK_URL = 'https://api.spotify.com/v1/me/player'
+SPOTIFY_ACCESS_TOKEN = ''
 
 
 def get_current_track(access_token):
@@ -13,6 +13,24 @@ def get_current_track(access_token):
         }
     )
     resp_json = response.json()
+
+    track_id = resp_json['item']['id']
+    track_name = resp_json['item']['name']
+    artists = resp_json['item']['artists']
+    artists_name = ', '.join(
+        [artist['name'] for artist in artists]
+        )
+    link = resp_json['item']['external_urls']['spotify']
+
+
+    cuurent_track_info = {
+        "id": track_id,
+        "name": track_name,
+        "artists": artists_name,
+        "link": link
+    }
+
+    return cuurent_track_info
 
 def main():
     current_track_info = get_current_track(
