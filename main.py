@@ -60,6 +60,6 @@ artist_id = result["id"] #stores the id of the artists
 songs = get_songs_by_artist(token, artist_id) #stores the results of the query for top tracks
 
 
-# Returns the list of top tracks and numbers them
+# prints the list of top tracks and numbers them
 for idx, song in enumerate(songs):
     print(f"{idx + 1}. {song['name']}")
