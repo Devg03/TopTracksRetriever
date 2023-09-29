@@ -1,9 +1,9 @@
-from dotenv import load_dotenv
-import os
 import base64
 import json
-from requests import post, get
+import os
 
+from dotenv import load_dotenv
+from requests import get, post
 
 load_dotenv()
 
@@ -36,9 +36,30 @@ def search_for_artist(token, artist_name):
 
     query_url = url + query
     result = get(query_url, headers = headers) # Stores the returned headers
-    json_result = json.loads(result.content)
-    print(json_result) # Prints to ensure the functionality
+    json_result = json.loads(result.content)["artists"]["items"] # Only searches for the artists name and related info.
 
+    # If no artists exists by that name then returns the following
+    if len(json_result) == 0:
+        print("No artist with the name entered exists....")
+        return None
+    
+    return json_result[0] # If the artists exists then the returns the info.
+
+
+# Function to search for top-tracks based on the artist_id which is a must for SpotifyAPI to search anything related to an artist
+def get_songs_by_artist(token, artist_id):
+    url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?country=US"
+    headers = get_auth_headers(token)
+    result = get(url, headers=headers)
+    json_result = json.loads(result.content)['tracks']
+    return json_result
 
 token = get_token()
-search_for_artist(token, "ACDC") # Searchig for ACDC
+result = search_for_artist(token, "ACDC") # Searchig for ACDC
+artist_id = result["id"] #stores the id of the artists
+songs = get_songs_by_artist(token, artist_id) #stores the results of the query for top tracks
+
+
+# Returns the list of top tracks and numbers them
+for idx, song in enumerate(songs):
+    print(f"{idx + 1}. {song['name']}")
